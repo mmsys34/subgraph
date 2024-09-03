@@ -94,9 +94,9 @@ dataSources:
     name: MetaMorphoFactory
     network: mainnet
     source:
-      address: "0xb21fa39418F3AbBAE407124896B84980E7149b3e"
+      address: "0x71010e36e0f3202261da1e7c17535ff379d76a92"
       abi: MetaMorphoFactory
-      startBlock: 3339629
+      startBlock: 1875631
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
