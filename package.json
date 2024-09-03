@@ -4,9 +4,9 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "create-local": "graph create --node http://localhost:8020/ morpho-org/morpho-blue",
-    "remove-local": "graph remove --node http://localhost:8020/ morpho-org/morpho-blue",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 morpho-org/morpho-blue",
+    "create-local": "graph create --node http://localhost:8020/ more-markets/more-subgraph",
+    "remove-local": "graph remove --node http://localhost:8020/ more-markets/more-subgraph",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 more-markets/more-subgraph",
     "test": "graph test",
     "lint": "eslint --ext .ts .",
     "lint:fix": "yarn lint --fix",
