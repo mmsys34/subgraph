@@ -13,7 +13,8 @@ import {
 const MORPHO_BLUE_ADDRESS = new Map<string, Address>();
 MORPHO_BLUE_ADDRESS.set(
   "mainnet",
-  Address.fromString("0xbbbbbbbbbb9cc5e90e3b3af64bdaf62c37eeffcb")
+  // Address.fromString("0xbbbbbbbbbb9cc5e90e3b3af64bdaf62c37eeffcb")
+  Address.fromString("0x5d7de68283a0afcd5a1411596577cc389cdf4bae")
 );
 
 let protocol: LendingProtocol | null = null;
