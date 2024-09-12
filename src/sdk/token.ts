@@ -14,6 +14,19 @@ import { fetchUsdTokenPrice } from "../fetchUsdTokenPrice";
 
 import { exponentToBigDecimal } from "./constants";
 
+const doge = Address.fromString(
+  "0x58f3875dbefcf784ea40a886ec24e3c3fab2db19"
+).toHexString();
+const usdc = Address.fromString(
+  "0xc4dd98f4ecebfb0f86ff6f8a60668cf60c45e830"
+).toHexString();
+const ripple = Address.fromString(
+  "0x1a9a8787b95871233d2421067b60af17cf44cd4f"
+).toHexString();
+const usdt = Address.fromString(
+  "0xf1107a71103398641c899f0c2d9515d1cb3761b3"
+).toHexString();
+
 /**
  * This file contains the TokenClass, which acts as
  * a wrapper for the Token entity making it easier to
@@ -41,11 +54,14 @@ export class TokenManager {
     let _token = Token.load(tokenAddress);
     if (!_token) {
       _token = new Token(tokenAddress);
-      _token.name = this.fetchTokenName(Address.fromBytes(tokenAddress));
-      _token.symbol = this.fetchTokenSymbol(Address.fromBytes(tokenAddress));
-      _token.decimals = this.fetchTokenDecimals(
-        Address.fromBytes(tokenAddress)
-      );
+      // _token.name = this.fetchTokenName(Address.fromBytes(tokenAddress));
+      // _token.symbol = this.fetchTokenSymbol(Address.fromBytes(tokenAddress));
+      // _token.decimals = this.fetchTokenDecimals(
+      //   Address.fromBytes(tokenAddress)
+      // );
+      _token.name = this.fetchTokenInfo1(Address.fromBytes(tokenAddress));
+      _token.symbol = this.fetchTokenInfo2(Address.fromBytes(tokenAddress));
+      _token.decimals = this.fetchTokenInfo3(Address.fromBytes(tokenAddress));
       if (tokenType) {
         _token.type = tokenType;
       }
@@ -91,6 +107,60 @@ export class TokenManager {
   ////////////////////
   ///// Creators /////
   ////////////////////
+
+  private fetchTokenInfo1(tokenAddress: Address): string {
+    let name = "";
+
+    if (tokenAddress.equals(Address.fromString(doge))) {
+      name = "doge";
+    } else if (tokenAddress.equals(Address.fromString(usdc))) {
+      name = "USDC Token";
+    } else if (tokenAddress.equals(Address.fromString(ripple))) {
+      name = "ripple";
+    } else if (tokenAddress.equals(Address.fromString(usdt))) {
+      name = "Tether USD";
+    } else {
+      name = "MockToken";
+    }
+
+    return name;
+  }
+
+  private fetchTokenInfo2(tokenAddress: Address): string {
+    let symbol = "";
+
+    if (tokenAddress.equals(Address.fromString(doge))) {
+      symbol = "DOGE";
+    } else if (tokenAddress.equals(Address.fromString(usdc))) {
+      symbol = "USDC";
+    } else if (tokenAddress.equals(Address.fromString(ripple))) {
+      symbol = "RPX";
+    } else if (tokenAddress.equals(Address.fromString(usdt))) {
+      symbol = "USDT";
+    } else {
+      symbol = "MOCK";
+    }
+
+    return symbol;
+  }
+
+  private fetchTokenInfo3(tokenAddress: Address): i32 {
+    let decimals = 0;
+
+    if (tokenAddress.equals(Address.fromString(doge))) {
+      decimals = 18;
+    } else if (tokenAddress.equals(Address.fromString(usdc))) {
+      decimals = 18;
+    } else if (tokenAddress.equals(Address.fromString(ripple))) {
+      decimals = 18;
+    } else if (tokenAddress.equals(Address.fromString(usdt))) {
+      decimals = 18;
+    } else {
+      decimals = 18;
+    }
+
+    return decimals;
+  }
 
   private fetchTokenSymbol(tokenAddress: Address): string {
     const contract = ERC20.bind(tokenAddress);

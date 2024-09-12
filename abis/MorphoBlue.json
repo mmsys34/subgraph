@@ -1,1526 +1,1692 @@
 [
   {
+    "type": "constructor",
     "inputs": [
+      { "name": "newOwner", "type": "address", "internalType": "address" },
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
+        "name": "_debtTokenFactory",
+        "type": "address",
+        "internalType": "address"
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "stateMutability": "nonpayable"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "prevBorrowRate",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "interest",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "feeShares",
-        "type": "uint256"
-      }
-    ],
-    "name": "AccrueInterest",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
-      }
-    ],
-    "name": "Borrow",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "loanToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "collateralToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
-      }
-    ],
-    "name": "CreateMarket",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "irm",
-        "type": "address"
-      }
-    ],
-    "name": "EnableIrm",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "lltv",
-        "type": "uint256"
-      }
-    ],
-    "name": "EnableLltv",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      }
-    ],
-    "name": "FlashLoan",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "authorizer",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "usedNonce",
-        "type": "uint256"
-      }
-    ],
-    "name": "IncrementNonce",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "borrower",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "repaidAssets",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "repaidShares",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "seizedAssets",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "badDebtAssets",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "badDebtShares",
-        "type": "uint256"
-      }
-    ],
-    "name": "Liquidate",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
-      }
-    ],
-    "name": "Repay",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "authorizer",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "authorized",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "newIsAuthorized",
-        "type": "bool"
-      }
-    ],
-    "name": "SetAuthorization",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "newFee",
-        "type": "uint256"
-      }
-    ],
-    "name": "SetFee",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newFeeRecipient",
-        "type": "address"
-      }
-    ],
-    "name": "SetFeeRecipient",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "SetOwner",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
-      }
-    ],
-    "name": "Supply",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      }
-    ],
-    "name": "SupplyCollateral",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
-      }
-    ],
-    "name": "Withdraw",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "Id",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      }
-    ],
-    "name": "WithdrawCollateral",
-    "type": "event"
-  },
-  {
-    "inputs": [],
+    "type": "function",
     "name": "DOMAIN_SEPARATOR",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bytes32", "internalType": "bytes32" }],
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "loanToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "collateralToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
-      }
-    ],
+    "type": "function",
     "name": "accrueInterest",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
         "components": [
           {
-            "internalType": "address",
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
             "name": "loanToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
             "name": "collateralToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
           },
           {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
           }
-        ],
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
-      },
-      {
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
+        ]
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "arrayOfMarkets",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bytes32[]", "internalType": "Id[]" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "borrow",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
         "components": [
           {
-            "internalType": "address",
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
             "name": "loanToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
             "name": "collateralToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
           },
           {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
           }
-        ],
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
-      }
+        ]
+      },
+      { "name": "assets", "type": "uint256", "internalType": "uint256" },
+      { "name": "shares", "type": "uint256", "internalType": "uint256" },
+      { "name": "onBehalf", "type": "address", "internalType": "address" },
+      { "name": "receiver", "type": "address", "internalType": "address" }
     ],
+    "outputs": [
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "claimDebtTokens",
+    "inputs": [
+      {
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
+        "components": [
+          {
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "loanToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "collateralToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          }
+        ]
+      },
+      { "name": "onBehalf", "type": "address", "internalType": "address" },
+      { "name": "receiver", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "createMarket",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "irm",
-        "type": "address"
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
+        "components": [
+          {
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "loanToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "collateralToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          }
+        ]
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "debtTokenFactory",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "enableIrm",
+    "inputs": [{ "name": "irm", "type": "address", "internalType": "address" }],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "lltv",
-        "type": "uint256"
-      }
-    ],
+    "type": "function",
     "name": "enableLltv",
+    "inputs": [
+      { "name": "lltv", "type": "uint256", "internalType": "uint256" }
+    ],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32[]",
-        "name": "slots",
-        "type": "bytes32[]"
-      }
-    ],
+    "type": "function",
     "name": "extSloads",
-    "outputs": [
-      {
-        "internalType": "bytes32[]",
-        "name": "res",
-        "type": "bytes32[]"
-      }
+    "inputs": [
+      { "name": "slots", "type": "bytes32[]", "internalType": "bytes32[]" }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [
+      { "name": "res", "type": "bytes32[]", "internalType": "bytes32[]" }
+    ],
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "feeRecipient",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "flashLoan",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "Id",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "idToMarketParams",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "loanToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "collateralToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "oracle",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "irm",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lltv",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "isAuthorized",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "isIrmEnabled",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "isLltvEnabled",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "loanToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "collateralToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
-      },
-      {
-        "internalType": "address",
-        "name": "borrower",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "seizedAssets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "repaidShares",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "liquidate",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "Id",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "market",
-    "outputs": [
-      {
-        "internalType": "uint128",
-        "name": "totalSupplyAssets",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "totalSupplyShares",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "totalBorrowAssets",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "totalBorrowShares",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "lastUpdate",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "fee",
-        "type": "uint128"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "nonce",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "flashLoan",
+    "inputs": [
+      { "name": "token", "type": "address", "internalType": "address" },
+      { "name": "assets", "type": "uint256", "internalType": "uint256" },
+      { "name": "data", "type": "bytes", "internalType": "bytes" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "idToDebtToken",
+    "inputs": [{ "name": "", "type": "bytes32", "internalType": "Id" }],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "idToMarketParams",
+    "inputs": [{ "name": "id", "type": "bytes32", "internalType": "Id" }],
+    "outputs": [
+      { "name": "isPremiumMarket", "type": "bool", "internalType": "bool" },
+      { "name": "loanToken", "type": "address", "internalType": "address" },
+      {
+        "name": "collateralToken",
+        "type": "address",
+        "internalType": "address"
+      },
+      { "name": "oracle", "type": "address", "internalType": "address" },
+      { "name": "irm", "type": "address", "internalType": "address" },
+      { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+      {
+        "name": "_creditAttestationService",
+        "type": "address",
+        "internalType": "address"
+      },
+      { "name": "irxMaxLltv", "type": "uint96", "internalType": "uint96" },
+      {
+        "name": "categoryLltv",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "irxMaxAvailable",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isAuthorized",
+    "inputs": [
+      { "name": "", "type": "address", "internalType": "address" },
+      { "name": "", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isIrmEnabled",
+    "inputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isLltvEnabled",
+    "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "lastTotalDebtAssetsGenerated",
+    "inputs": [{ "name": "", "type": "bytes32", "internalType": "Id" }],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "liquidate",
+    "inputs": [
+      {
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
+        "components": [
+          {
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "loanToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "collateralToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          }
+        ]
+      },
+      { "name": "borrower", "type": "address", "internalType": "address" },
+      {
+        "name": "seizedAssets",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "repaidShares",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      { "name": "data", "type": "bytes", "internalType": "bytes" }
+    ],
+    "outputs": [
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "market",
+    "inputs": [{ "name": "", "type": "bytes32", "internalType": "Id" }],
+    "outputs": [
+      {
+        "name": "totalSupplyAssets",
+        "type": "uint128",
+        "internalType": "uint128"
+      },
+      {
+        "name": "totalSupplyShares",
+        "type": "uint128",
+        "internalType": "uint128"
+      },
+      {
+        "name": "totalBorrowAssets",
+        "type": "uint128",
+        "internalType": "uint128"
+      },
+      {
+        "name": "totalBorrowShares",
+        "type": "uint128",
+        "internalType": "uint128"
+      },
+      { "name": "lastUpdate", "type": "uint128", "internalType": "uint128" },
+      { "name": "fee", "type": "uint128", "internalType": "uint128" },
+      {
+        "name": "isPremiumFeeEnabled",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      { "name": "premiumFee", "type": "uint128", "internalType": "uint128" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "maxLltvForCategory",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "nonce",
+    "inputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "internalType": "Id",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "type": "function",
     "name": "position",
+    "inputs": [
+      { "name": "", "type": "bytes32", "internalType": "Id" },
+      { "name": "", "type": "address", "internalType": "address" }
+    ],
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "supplyShares",
-        "type": "uint256"
+        "type": "uint128",
+        "internalType": "uint128"
       },
       {
-        "internalType": "uint128",
         "name": "borrowShares",
-        "type": "uint128"
+        "type": "uint128",
+        "internalType": "uint128"
+      },
+      { "name": "collateral", "type": "uint128", "internalType": "uint128" },
+      {
+        "name": "lastMultiplier",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        "internalType": "uint128",
-        "name": "collateral",
-        "type": "uint128"
+        "name": "debtTokenMissed",
+        "type": "uint128",
+        "internalType": "uint128"
+      },
+      {
+        "name": "debtTokenGained",
+        "type": "uint128",
+        "internalType": "uint128"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "loanToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "collateralToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
-      },
-      {
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
+    "type": "function",
     "name": "repay",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "authorized",
-        "type": "address"
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
+        "components": [
+          {
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "loanToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "collateralToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          }
+        ]
       },
-      {
-        "internalType": "bool",
-        "name": "newIsAuthorized",
-        "type": "bool"
-      }
+      { "name": "assets", "type": "uint256", "internalType": "uint256" },
+      { "name": "shares", "type": "uint256", "internalType": "uint256" },
+      { "name": "onBehalf", "type": "address", "internalType": "address" },
+      { "name": "data", "type": "bytes", "internalType": "bytes" }
     ],
+    "outputs": [
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "setAuthorization",
+    "inputs": [
+      { "name": "authorized", "type": "address", "internalType": "address" },
+      { "name": "newIsAuthorized", "type": "bool", "internalType": "bool" }
+    ],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "authorizer",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "authorized",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "isAuthorized",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "nonce",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deadline",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Authorization",
-        "name": "authorization",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint8",
-            "name": "v",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "r",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "s",
-            "type": "bytes32"
-          }
-        ],
-        "internalType": "struct Signature",
-        "name": "signature",
-        "type": "tuple"
-      }
-    ],
+    "type": "function",
     "name": "setAuthorizationWithSig",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
+        "name": "authorization",
+        "type": "tuple",
+        "internalType": "struct Authorization",
         "components": [
           {
-            "internalType": "address",
-            "name": "loanToken",
-            "type": "address"
+            "name": "authorizer",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
-            "name": "collateralToken",
-            "type": "address"
+            "name": "authorized",
+            "type": "address",
+            "internalType": "address"
           },
-          {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
+          { "name": "isAuthorized", "type": "bool", "internalType": "bool" },
+          { "name": "nonce", "type": "uint256", "internalType": "uint256" },
+          { "name": "deadline", "type": "uint256", "internalType": "uint256" }
+        ]
       },
       {
-        "internalType": "uint256",
-        "name": "newFee",
-        "type": "uint256"
+        "name": "signature",
+        "type": "tuple",
+        "internalType": "struct Signature",
+        "components": [
+          { "name": "v", "type": "uint8", "internalType": "uint8" },
+          { "name": "r", "type": "bytes32", "internalType": "bytes32" },
+          { "name": "s", "type": "bytes32", "internalType": "bytes32" }
+        ]
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "setFee",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "newFeeRecipient",
-        "type": "address"
-      }
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
+        "components": [
+          {
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "loanToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "collateralToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          }
+        ]
+      },
+      { "name": "newFee", "type": "uint256", "internalType": "uint256" }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "setFeeRecipient",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
+        "name": "newFeeRecipient",
+        "type": "address",
+        "internalType": "address"
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setIrxMax",
+    "inputs": [
+      {
+        "name": "_irxMaxAvailable",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setMaxLltvForCategory",
+    "inputs": [
+      {
+        "name": "_maxLltvForCategory",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "setOwner",
+    "inputs": [
+      { "name": "newOwner", "type": "address", "internalType": "address" }
+    ],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "setPremiumFee",
     "inputs": [
       {
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
         "components": [
           {
-            "internalType": "address",
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
             "name": "loanToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
             "name": "collateralToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
           },
           {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
           }
-        ],
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
+        ]
       },
+      { "name": "isEnabled", "type": "bool", "internalType": "bool" },
       {
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
+        "name": "newPremiumFee",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "supply",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
         "components": [
           {
-            "internalType": "address",
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
             "name": "loanToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
             "name": "collateralToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
           },
           {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
           }
-        ],
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
+        ]
       },
-      {
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
+      { "name": "assets", "type": "uint256", "internalType": "uint256" },
+      { "name": "shares", "type": "uint256", "internalType": "uint256" },
+      { "name": "onBehalf", "type": "address", "internalType": "address" },
+      { "name": "data", "type": "bytes", "internalType": "bytes" }
     ],
+    "outputs": [
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "supplyCollateral",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
         "components": [
           {
-            "internalType": "address",
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
             "name": "loanToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
             "name": "collateralToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
           },
           {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
           }
-        ],
-        "internalType": "struct MarketParams",
-        "name": "marketParams",
-        "type": "tuple"
+        ]
       },
-      {
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      }
+      { "name": "assets", "type": "uint256", "internalType": "uint256" },
+      { "name": "onBehalf", "type": "address", "internalType": "address" },
+      { "name": "data", "type": "bytes", "internalType": "bytes" }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "totalBorrowAssetsForMultiplier",
+    "inputs": [
+      { "name": "", "type": "bytes32", "internalType": "Id" },
+      { "name": "", "type": "uint64", "internalType": "uint64" }
+    ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "totalBorrowSharesForMultiplier",
+    "inputs": [
+      { "name": "", "type": "bytes32", "internalType": "Id" },
+      { "name": "", "type": "uint64", "internalType": "uint64" }
+    ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "totalDebtAssetsGenerated",
+    "inputs": [{ "name": "", "type": "bytes32", "internalType": "Id" }],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tps",
+    "inputs": [{ "name": "", "type": "bytes32", "internalType": "Id" }],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "updateBorrower",
+    "inputs": [
+      {
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
+        "components": [
+          {
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "loanToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "collateralToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          }
+        ]
+      },
+      { "name": "borrower", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "withdraw",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
+        "name": "marketParams",
+        "type": "tuple",
+        "internalType": "struct MarketParams",
         "components": [
           {
-            "internalType": "address",
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
             "name": "loanToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
             "name": "collateralToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "address",
-            "name": "oracle",
-            "type": "address"
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
           },
           {
-            "internalType": "address",
-            "name": "irm",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lltv",
-            "type": "uint256"
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
           }
-        ],
-        "internalType": "struct MarketParams",
+        ]
+      },
+      { "name": "assets", "type": "uint256", "internalType": "uint256" },
+      { "name": "shares", "type": "uint256", "internalType": "uint256" },
+      { "name": "onBehalf", "type": "address", "internalType": "address" },
+      { "name": "receiver", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "withdrawCollateral",
+    "inputs": [
+      {
         "name": "marketParams",
-        "type": "tuple"
+        "type": "tuple",
+        "internalType": "struct MarketParams",
+        "components": [
+          {
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "loanToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "collateralToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          }
+        ]
+      },
+      { "name": "assets", "type": "uint256", "internalType": "uint256" },
+      { "name": "onBehalf", "type": "address", "internalType": "address" },
+      { "name": "receiver", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "AccrueInterest",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
       },
       {
-        "internalType": "uint256",
-        "name": "assets",
-        "type": "uint256"
+        "name": "prevBorrowRate",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "onBehalf",
-        "type": "address"
+        "name": "interest",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
+        "name": "feeShares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       }
     ],
-    "name": "withdrawCollateral",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Borrow",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "onBehalf",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "receiver",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "assets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "shares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "CreateMarket",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "marketParams",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct MarketParams",
+        "components": [
+          {
+            "name": "isPremiumMarket",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "loanToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "collateralToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "oracle", "type": "address", "internalType": "address" },
+          { "name": "irm", "type": "address", "internalType": "address" },
+          { "name": "lltv", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creditAttestationService",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "irxMaxLltv",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "categoryLltv",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          }
+        ]
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "EnableIrm",
+    "inputs": [
+      {
+        "name": "irm",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "EnableLltv",
+    "inputs": [
+      {
+        "name": "lltv",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "FlashLoan",
+    "inputs": [
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "assets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "IncrementNonce",
+    "inputs": [
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "authorizer",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "usedNonce",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Liquidate",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "borrower",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "repaidAssets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "repaidShares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "seizedAssets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "badDebtAssets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "badDebtShares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Repay",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "onBehalf",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "assets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "shares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetAuthorization",
+    "inputs": [
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "authorizer",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "authorized",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newIsAuthorized",
+        "type": "bool",
+        "indexed": false,
+        "internalType": "bool"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetFee",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "newFee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetFeeRecipient",
+    "inputs": [
+      {
+        "name": "newFeeRecipient",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetIrxMaxAvailable",
+    "inputs": [
+      {
+        "name": "newIrxMaxAvailable",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetMaxLltvForCategory",
+    "inputs": [
+      {
+        "name": "newMaxLltvForCategory",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetOwner",
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetPremiumFee",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "isEnabled",
+        "type": "bool",
+        "indexed": false,
+        "internalType": "bool"
+      },
+      {
+        "name": "newPremiumFee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Supply",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "onBehalf",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "assets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "shares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SupplyCollateral",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "onBehalf",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "assets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Withdraw",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "onBehalf",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "receiver",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "assets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "shares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "WithdrawCollateral",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "Id"
+      },
+      {
+        "name": "caller",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "onBehalf",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "receiver",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "assets",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "InvalidCategoryLltvValue",
+    "inputs": [
+      { "name": "numberInArray", "type": "uint8", "internalType": "uint8" },
+      {
+        "name": "maxAvailableValue",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "minAvailableValue",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "providedValue",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "InvalidIrxMaxValue",
+    "inputs": [
+      {
+        "name": "maxAvailableValue",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "minAvailableValue",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "providedValue",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "InvalidLengthOfCategoriesLltvsArray",
+    "inputs": [
+      {
+        "name": "expectedLength",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "providedLength",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  { "type": "error", "name": "NothingToClaim", "inputs": [] }
 ]
