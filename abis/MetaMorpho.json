@@ -18,11 +18,7 @@
     "name": "MORE_MARKETS",
     "inputs": [],
     "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "contract IMoreMarkets"
-      }
+      { "name": "", "type": "address", "internalType": "contract IMoreMarkets" }
     ],
     "stateMutability": "view"
   },
@@ -48,16 +44,8 @@
         "type": "tuple",
         "internalType": "struct MarketParams",
         "components": [
-          {
-            "name": "isPremiumMarket",
-            "type": "bool",
-            "internalType": "bool"
-          },
-          {
-            "name": "loanToken",
-            "type": "address",
-            "internalType": "address"
-          },
+          { "name": "isPremiumMarket", "type": "bool", "internalType": "bool" },
+          { "name": "loanToken", "type": "address", "internalType": "address" },
           {
             "name": "collateralToken",
             "type": "address",
@@ -71,11 +59,7 @@
             "type": "address",
             "internalType": "address"
           },
-          {
-            "name": "irxMaxLltv",
-            "type": "uint96",
-            "internalType": "uint96"
-          },
+          { "name": "irxMaxLltv", "type": "uint96", "internalType": "uint96" },
           {
             "name": "categoryLltv",
             "type": "uint256[]",
@@ -228,11 +212,7 @@
         "internalType": "address"
       },
       { "name": "salt", "type": "bytes32", "internalType": "bytes32" },
-      {
-        "name": "extensions",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
-      }
+      { "name": "extensions", "type": "uint256[]", "internalType": "uint256[]" }
     ],
     "stateMutability": "view"
   },
@@ -273,11 +253,7 @@
     "inputs": [
       { "name": "owner", "type": "address", "internalType": "address" },
       { "name": "moreMarkets", "type": "address", "internalType": "address" },
-      {
-        "name": "vaultsFactory",
-        "type": "address",
-        "internalType": "address"
-      },
+      { "name": "vaultsFactory", "type": "address", "internalType": "address" },
       {
         "name": "initialTimelock",
         "type": "uint256",
@@ -507,11 +483,7 @@
                 "internalType": "address"
               },
               { "name": "irm", "type": "address", "internalType": "address" },
-              {
-                "name": "lltv",
-                "type": "uint256",
-                "internalType": "uint256"
-              },
+              { "name": "lltv", "type": "uint256", "internalType": "uint256" },
               {
                 "name": "creditAttestationService",
                 "type": "address",
@@ -619,11 +591,7 @@
     "type": "function",
     "name": "setIsAllocator",
     "inputs": [
-      {
-        "name": "newAllocator",
-        "type": "address",
-        "internalType": "address"
-      },
+      { "name": "newAllocator", "type": "address", "internalType": "address" },
       { "name": "newIsAllocator", "type": "bool", "internalType": "bool" }
     ],
     "outputs": [],
@@ -646,11 +614,7 @@
     "type": "function",
     "name": "setSupplyQueue",
     "inputs": [
-      {
-        "name": "newSupplyQueue",
-        "type": "bytes32[]",
-        "internalType": "Id[]"
-      }
+      { "name": "newSupplyQueue", "type": "bytes32[]", "internalType": "Id[]" }
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
@@ -680,16 +644,8 @@
         "type": "tuple",
         "internalType": "struct MarketParams",
         "components": [
-          {
-            "name": "isPremiumMarket",
-            "type": "bool",
-            "internalType": "bool"
-          },
-          {
-            "name": "loanToken",
-            "type": "address",
-            "internalType": "address"
-          },
+          { "name": "isPremiumMarket", "type": "bool", "internalType": "bool" },
+          { "name": "loanToken", "type": "address", "internalType": "address" },
           {
             "name": "collateralToken",
             "type": "address",
@@ -703,11 +659,7 @@
             "type": "address",
             "internalType": "address"
           },
-          {
-            "name": "irxMaxLltv",
-            "type": "uint96",
-            "internalType": "uint96"
-          },
+          { "name": "irxMaxLltv", "type": "uint96", "internalType": "uint96" },
           {
             "name": "categoryLltv",
             "type": "uint256[]",
@@ -738,16 +690,8 @@
         "type": "tuple",
         "internalType": "struct MarketParams",
         "components": [
-          {
-            "name": "isPremiumMarket",
-            "type": "bool",
-            "internalType": "bool"
-          },
-          {
-            "name": "loanToken",
-            "type": "address",
-            "internalType": "address"
-          },
+          { "name": "isPremiumMarket", "type": "bool", "internalType": "bool" },
+          { "name": "loanToken", "type": "address", "internalType": "address" },
           {
             "name": "collateralToken",
             "type": "address",
@@ -761,11 +705,7 @@
             "type": "address",
             "internalType": "address"
           },
-          {
-            "name": "irxMaxLltv",
-            "type": "uint96",
-            "internalType": "uint96"
-          },
+          { "name": "irxMaxLltv", "type": "uint96", "internalType": "uint96" },
           {
             "name": "categoryLltv",
             "type": "uint256[]",
@@ -1100,12 +1040,7 @@
         "indexed": true,
         "internalType": "address"
       },
-      {
-        "name": "id",
-        "type": "bytes32",
-        "indexed": true,
-        "internalType": "Id"
-      }
+      { "name": "id", "type": "bytes32", "indexed": true, "internalType": "Id" }
     ],
     "anonymous": false
   },
@@ -1132,12 +1067,7 @@
         "indexed": true,
         "internalType": "address"
       },
-      {
-        "name": "id",
-        "type": "bytes32",
-        "indexed": true,
-        "internalType": "Id"
-      }
+      { "name": "id", "type": "bytes32", "indexed": true, "internalType": "Id" }
     ],
     "anonymous": false
   },
@@ -1405,12 +1335,7 @@
         "indexed": true,
         "internalType": "address"
       },
-      {
-        "name": "id",
-        "type": "bytes32",
-        "indexed": true,
-        "internalType": "Id"
-      }
+      { "name": "id", "type": "bytes32", "indexed": true, "internalType": "Id" }
     ],
     "anonymous": false
   },

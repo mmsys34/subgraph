@@ -14,17 +14,23 @@ import { fetchUsdTokenPrice } from "../fetchUsdTokenPrice";
 
 import { exponentToBigDecimal } from "./constants";
 
-const doge = Address.fromString(
-  "0x58f3875dbefcf784ea40a886ec24e3c3fab2db19"
+const USDCf = Address.fromString(
+  "0xaCA1aB5EB856F7645Cd6b9694bA840f3C18BC83e"
 ).toHexString();
-const usdc = Address.fromString(
-  "0xc4dd98f4ecebfb0f86ff6f8a60668cf60c45e830"
+const USDf = Address.fromString(
+  "0x4D40CDcE3864CA8FCBA1B7De4C0a66f37b28092c"
 ).toHexString();
-const ripple = Address.fromString(
-  "0x1a9a8787b95871233d2421067b60af17cf44cd4f"
+const BTCf = Address.fromString(
+  "0x866E7292A4b9813146591Cb6211AAc33432cF07f"
 ).toHexString();
-const usdt = Address.fromString(
-  "0xf1107a71103398641c899f0c2d9515d1cb3761b3"
+const ETHf = Address.fromString(
+  "0x50bE444228F6f27899E52E56718C0ae67F962185"
+).toHexString();
+const ankrF = Address.fromString(
+  "0x3D08ce8bA948ddd6ab0745670134A55e8e35aA8C"
+).toHexString();
+const wFLOW = Address.fromString(
+  "0xe6De44AC50C1D1C83f67695f6B4820a317285FC6"
 ).toHexString();
 
 /**
@@ -111,14 +117,18 @@ export class TokenManager {
   private fetchTokenInfo1(tokenAddress: Address): string {
     let name = "";
 
-    if (tokenAddress.equals(Address.fromString(doge))) {
-      name = "doge";
-    } else if (tokenAddress.equals(Address.fromString(usdc))) {
-      name = "USDC Token";
-    } else if (tokenAddress.equals(Address.fromString(ripple))) {
-      name = "ripple";
-    } else if (tokenAddress.equals(Address.fromString(usdt))) {
-      name = "Tether USD";
+    if (tokenAddress.equals(Address.fromString(USDCf))) {
+      name = "USDCf(USDC) mock coin";
+    } else if (tokenAddress.equals(Address.fromString(USDf))) {
+      name = "USDf(PYUSD) mock coin";
+    } else if (tokenAddress.equals(Address.fromString(BTCf))) {
+      name = "BTCf(wBTC) mock coin";
+    } else if (tokenAddress.equals(Address.fromString(ETHf))) {
+      name = "ETHf(wETH) mock coin";
+    } else if (tokenAddress.equals(Address.fromString(wFLOW))) {
+      name = "wrapped FLOW mock coin";
+    } else if (tokenAddress.equals(Address.fromString(ankrF))) {
+      name = "ankr.FLOW mock coin";
     } else {
       name = "MockToken";
     }
@@ -129,14 +139,18 @@ export class TokenManager {
   private fetchTokenInfo2(tokenAddress: Address): string {
     let symbol = "";
 
-    if (tokenAddress.equals(Address.fromString(doge))) {
-      symbol = "DOGE";
-    } else if (tokenAddress.equals(Address.fromString(usdc))) {
-      symbol = "USDC";
-    } else if (tokenAddress.equals(Address.fromString(ripple))) {
-      symbol = "RPX";
-    } else if (tokenAddress.equals(Address.fromString(usdt))) {
-      symbol = "USDT";
+    if (tokenAddress.equals(Address.fromString(USDCf))) {
+      symbol = "USDCf";
+    } else if (tokenAddress.equals(Address.fromString(USDf))) {
+      symbol = "USDf";
+    } else if (tokenAddress.equals(Address.fromString(BTCf))) {
+      symbol = "BTCf";
+    } else if (tokenAddress.equals(Address.fromString(ETHf))) {
+      symbol = "ETHf";
+    } else if (tokenAddress.equals(Address.fromString(ankrF))) {
+      symbol = "ankr.FLOW";
+    } else if (tokenAddress.equals(Address.fromString(wFLOW))) {
+      symbol = "wFLOW";
     } else {
       symbol = "MOCK";
     }
@@ -147,13 +161,17 @@ export class TokenManager {
   private fetchTokenInfo3(tokenAddress: Address): i32 {
     let decimals = 0;
 
-    if (tokenAddress.equals(Address.fromString(doge))) {
+    if (tokenAddress.equals(Address.fromString(USDCf))) {
+      decimals = 6;
+    } else if (tokenAddress.equals(Address.fromString(USDf))) {
+      decimals = 6;
+    } else if (tokenAddress.equals(Address.fromString(BTCf))) {
+      decimals = 8;
+    } else if (tokenAddress.equals(Address.fromString(ETHf))) {
       decimals = 18;
-    } else if (tokenAddress.equals(Address.fromString(usdc))) {
+    } else if (tokenAddress.equals(Address.fromString(ankrF))) {
       decimals = 18;
-    } else if (tokenAddress.equals(Address.fromString(ripple))) {
-      decimals = 18;
-    } else if (tokenAddress.equals(Address.fromString(usdt))) {
+    } else if (tokenAddress.equals(Address.fromString(wFLOW))) {
       decimals = 18;
     } else {
       decimals = 18;
