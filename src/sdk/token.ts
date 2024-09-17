@@ -15,22 +15,22 @@ import { fetchUsdTokenPrice } from "../fetchUsdTokenPrice";
 import { exponentToBigDecimal } from "./constants";
 
 const USDCf = Address.fromString(
-  "0xaCA1aB5EB856F7645Cd6b9694bA840f3C18BC83e"
+  "0x5e65b6B04fbA51D95409712978Cb91E99d93aE73"
 ).toHexString();
 const USDf = Address.fromString(
-  "0x4D40CDcE3864CA8FCBA1B7De4C0a66f37b28092c"
+  "0xd7d43ab7b365f0d0789aE83F4385fA710FfdC98F"
 ).toHexString();
 const BTCf = Address.fromString(
-  "0x866E7292A4b9813146591Cb6211AAc33432cF07f"
+  "0x208d09d2a6Dd176e3e95b3F0DE172A7471C5B2d6"
 ).toHexString();
 const ETHf = Address.fromString(
-  "0x50bE444228F6f27899E52E56718C0ae67F962185"
+  "0x059A77239daFa770977DD9f1E98632C3E4559848"
 ).toHexString();
 const ankrF = Address.fromString(
-  "0x3D08ce8bA948ddd6ab0745670134A55e8e35aA8C"
+  "0xe132751AB5A14ac0bD3Cb40571a9248Ee7a2a9EA"
 ).toHexString();
 const wFLOW = Address.fromString(
-  "0xe6De44AC50C1D1C83f67695f6B4820a317285FC6"
+  "0xe0fd0a2A4C2E59a479AaB0cF44244E355C508766"
 ).toHexString();
 
 /**

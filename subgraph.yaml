@@ -6,9 +6,9 @@ dataSources:
     name: MorphoBlue
     network: mainnet
     source:
-      address: "0x7EBf3217f8A54De432ACFe6E803576CB859E22a3"
+      address: "0x9a9B20fAb58a0fF084e70283E91448bB31d0FAfa"
       abi: MorphoBlue
-      startBlock: 5091032
+      startBlock: 5805098
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -94,8 +94,8 @@ dataSources:
     name: MetaMorphoFactory
     network: mainnet
     source:
-      address: "0xa738ff722cb86970eddca22e4f06eca62c1c581a"
-      startBlock: 5098692
+      address: "0xACBdE7028CC21FD95496e3481AdCe5aDdB3C3B38"
+      startBlock: 5808350
       abi: MetaMorphoFactory
     mapping:
       kind: ethereum/events
@@ -128,7 +128,8 @@ dataSources:
           file: ./abis/REth.json
 
       eventHandlers:
-        - event: CreateMetaMorpho(indexed address,indexed address,address,uint256,indexed
+        - event:
+            CreateMetaMorpho(indexed address,indexed address,address,uint256,indexed
             address,string,string,bytes32)
           handler: handleCreateMetaMorpho
       file: ./src/meta-morpho-factory.ts

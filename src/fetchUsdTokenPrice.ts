@@ -17,15 +17,15 @@ import { BIGDECIMAL_ONE, BIGDECIMAL_WAD, BIGINT_WAD } from "./sdk/constants";
 // ).toHexString();
 
 const weth = Address.fromString(
-  "0x50bE444228F6f27899E52E56718C0ae67F962185"
+  "0x059A77239daFa770977DD9f1E98632C3E4559848"
 ).toHexString();
 
 const wbtc = Address.fromString(
-  "0x866E7292A4b9813146591Cb6211AAc33432cF07f"
+  "0x208d09d2a6Dd176e3e95b3F0DE172A7471C5B2d6"
 ).toHexString();
 
 const usdc = Address.fromString(
-  "0xaCA1aB5EB856F7645Cd6b9694bA840f3C18BC83e"
+  "0x5e65b6B04fbA51D95409712978Cb91E99d93aE73"
 ).toHexString();
 
 // const sdai = Address.fromString(
@@ -54,15 +54,15 @@ const usdc = Address.fromString(
 
 const pyUsd = Address.fromString(
   // in our implementation ot is called USDf
-  "0x4D40CDcE3864CA8FCBA1B7De4C0a66f37b28092c"
+  "0xd7d43ab7b365f0d0789aE83F4385fA710FfdC98F"
 ).toHexString();
 
 const ankr = Address.fromString(
-  "0x3D08ce8bA948ddd6ab0745670134A55e8e35aA8C"
+  "0xe132751AB5A14ac0bD3Cb40571a9248Ee7a2a9EA"
 ).toHexString();
 
 const wflow = Address.fromString(
-  "0xe6De44AC50C1D1C83f67695f6B4820a317285FC6"
+  "0xe0fd0a2A4C2E59a479AaB0cF44244E355C508766"
 ).toHexString();
 
 // const wusdm = Address.fromString(
@@ -106,37 +106,37 @@ const usdPriceFeeds = new Map<string, string>()
   .set(
     usdc,
     Address.fromString(
-      "0xEf6c4E2AD21917337C84089400B6d1f191764D31"
+      "0xBEfB2b2B48fdEece45253b2eD008540a23d25AFE"
     ).toHexString()
   )
   .set(
     pyUsd,
     Address.fromString(
-      "0x116930C32f2D8a52062FD37C2814fd4eB00E101C"
+      "0x2e9EcBf2D63094A08c9ff5eb20A4EbBFfBFc12eD"
     ).toHexString()
   )
   .set(
     wbtc,
     Address.fromString(
-      "0x4639CAeb838946b8fbc53684cD2aEc90CB8b5C84"
+      "0xe65b5154aE462fD08faD32B2A85841803135894b"
     ).toHexString()
   )
   .set(
     weth,
     Address.fromString(
-      "0x253E4f5040a3B1ADCc20D034b7D52650AA90D272"
+      "0x2b40Fc7326E3bF1DB3571e414d006Ee42d49C427"
     ).toHexString()
   )
   .set(
     wflow,
     Address.fromString(
-      "0x78B348c0559F7e2f9BB70612a7766De200ec8bcc"
+      "0xaCAd8eB605A93b8E0fF993f437f64155FB68D5DD"
     ).toHexString()
   )
   .set(
     ankr,
     Address.fromString(
-      "0xb243C23EF13000e7107b021760a217434B513d50"
+      "0x017efB6272Dc61DCcfc9a757c29Fd99187c9d208"
     ).toHexString()
   );
 // .set(
