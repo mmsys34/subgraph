@@ -14,7 +14,7 @@ const MORPHO_BLUE_ADDRESS = new Map<string, Address>();
 MORPHO_BLUE_ADDRESS.set(
   "mainnet",
   // Address.fromString("0xbbbbbbbbbb9cc5e90e3b3af64bdaf62c37eeffcb")
-  Address.fromString("0x5d7de68283a0afcd5a1411596577cc389cdf4bae")
+  Address.fromString("0x94A2a9202EFf6422ab80B6338d41c89014E5DD72")
 );
 
 let protocol: LendingProtocol | null = null;
@@ -32,9 +32,9 @@ function initBlue(): LendingProtocol {
   const protocol = new LendingProtocol(
     MORPHO_BLUE_ADDRESS.get(dataSource.network())
   );
-  protocol.protocol = "Morpho";
-  protocol.name = "Morpho Blue";
-  protocol.slug = "morpho-blue";
+  protocol.protocol = "MoreMarkets";
+  protocol.name = "More Markets";
+  protocol.slug = "more-markets";
   protocol.schemaVersion = "3.0.0";
   protocol.subgraphVersion = "0.0.7";
   protocol.methodologyVersion = "1.0.0";

@@ -6,9 +6,9 @@ dataSources:
     name: MorphoBlue
     network: mainnet
     source:
-      address: "0x9a9B20fAb58a0fF084e70283E91448bB31d0FAfa"
+      address: "0x94A2a9202EFf6422ab80B6338d41c89014E5DD72"
       abi: MorphoBlue
-      startBlock: 5805098
+      startBlock: 2871764
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -94,8 +94,8 @@ dataSources:
     name: MetaMorphoFactory
     network: mainnet
     source:
-      address: "0xACBdE7028CC21FD95496e3481AdCe5aDdB3C3B38"
-      startBlock: 5808350
+      address: "0x4B447E14Ee051522BDe18c6827A5a47B2D29293f"
+      startBlock: 2872496
       abi: MetaMorphoFactory
     mapping:
       kind: ethereum/events

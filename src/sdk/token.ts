@@ -14,25 +14,6 @@ import { fetchUsdTokenPrice } from "../fetchUsdTokenPrice";
 
 import { exponentToBigDecimal } from "./constants";
 
-const USDCf = Address.fromString(
-  "0x5e65b6B04fbA51D95409712978Cb91E99d93aE73"
-).toHexString();
-const USDf = Address.fromString(
-  "0xd7d43ab7b365f0d0789aE83F4385fA710FfdC98F"
-).toHexString();
-const BTCf = Address.fromString(
-  "0x208d09d2a6Dd176e3e95b3F0DE172A7471C5B2d6"
-).toHexString();
-const ETHf = Address.fromString(
-  "0x059A77239daFa770977DD9f1E98632C3E4559848"
-).toHexString();
-const ankrF = Address.fromString(
-  "0xe132751AB5A14ac0bD3Cb40571a9248Ee7a2a9EA"
-).toHexString();
-const wFLOW = Address.fromString(
-  "0xe0fd0a2A4C2E59a479AaB0cF44244E355C508766"
-).toHexString();
-
 /**
  * This file contains the TokenClass, which acts as
  * a wrapper for the Token entity making it easier to
@@ -60,14 +41,11 @@ export class TokenManager {
     let _token = Token.load(tokenAddress);
     if (!_token) {
       _token = new Token(tokenAddress);
-      // _token.name = this.fetchTokenName(Address.fromBytes(tokenAddress));
-      // _token.symbol = this.fetchTokenSymbol(Address.fromBytes(tokenAddress));
-      // _token.decimals = this.fetchTokenDecimals(
-      //   Address.fromBytes(tokenAddress)
-      // );
-      _token.name = this.fetchTokenInfo1(Address.fromBytes(tokenAddress));
-      _token.symbol = this.fetchTokenInfo2(Address.fromBytes(tokenAddress));
-      _token.decimals = this.fetchTokenInfo3(Address.fromBytes(tokenAddress));
+      _token.name = this.fetchTokenName(Address.fromBytes(tokenAddress));
+      _token.symbol = this.fetchTokenSymbol(Address.fromBytes(tokenAddress));
+      _token.decimals = this.fetchTokenDecimals(
+        Address.fromBytes(tokenAddress)
+      );
       if (tokenType) {
         _token.type = tokenType;
       }
@@ -113,72 +91,6 @@ export class TokenManager {
   ////////////////////
   ///// Creators /////
   ////////////////////
-
-  private fetchTokenInfo1(tokenAddress: Address): string {
-    let name = "";
-
-    if (tokenAddress.equals(Address.fromString(USDCf))) {
-      name = "USDCf(USDC) mock coin";
-    } else if (tokenAddress.equals(Address.fromString(USDf))) {
-      name = "USDf(PYUSD) mock coin";
-    } else if (tokenAddress.equals(Address.fromString(BTCf))) {
-      name = "BTCf(wBTC) mock coin";
-    } else if (tokenAddress.equals(Address.fromString(ETHf))) {
-      name = "ETHf(wETH) mock coin";
-    } else if (tokenAddress.equals(Address.fromString(wFLOW))) {
-      name = "wrapped FLOW mock coin";
-    } else if (tokenAddress.equals(Address.fromString(ankrF))) {
-      name = "ankr.FLOW mock coin";
-    } else {
-      name = "MockToken";
-    }
-
-    return name;
-  }
-
-  private fetchTokenInfo2(tokenAddress: Address): string {
-    let symbol = "";
-
-    if (tokenAddress.equals(Address.fromString(USDCf))) {
-      symbol = "USDCf";
-    } else if (tokenAddress.equals(Address.fromString(USDf))) {
-      symbol = "USDf";
-    } else if (tokenAddress.equals(Address.fromString(BTCf))) {
-      symbol = "BTCf";
-    } else if (tokenAddress.equals(Address.fromString(ETHf))) {
-      symbol = "ETHf";
-    } else if (tokenAddress.equals(Address.fromString(ankrF))) {
-      symbol = "ankr.FLOW";
-    } else if (tokenAddress.equals(Address.fromString(wFLOW))) {
-      symbol = "wFLOW";
-    } else {
-      symbol = "MOCK";
-    }
-
-    return symbol;
-  }
-
-  private fetchTokenInfo3(tokenAddress: Address): i32 {
-    let decimals = 0;
-
-    if (tokenAddress.equals(Address.fromString(USDCf))) {
-      decimals = 6;
-    } else if (tokenAddress.equals(Address.fromString(USDf))) {
-      decimals = 6;
-    } else if (tokenAddress.equals(Address.fromString(BTCf))) {
-      decimals = 8;
-    } else if (tokenAddress.equals(Address.fromString(ETHf))) {
-      decimals = 18;
-    } else if (tokenAddress.equals(Address.fromString(ankrF))) {
-      decimals = 18;
-    } else if (tokenAddress.equals(Address.fromString(wFLOW))) {
-      decimals = 18;
-    } else {
-      decimals = 18;
-    }
-
-    return decimals;
-  }
 
   private fetchTokenSymbol(tokenAddress: Address): string {
     const contract = ERC20.bind(tokenAddress);
