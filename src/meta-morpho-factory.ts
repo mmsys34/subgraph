@@ -1,6 +1,6 @@
 import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 
-import { CreateMetaMorpho as CreateMetaMorphoEvent } from "../generated/MetaMorphoFactory/MetaMorphoFactory";
+import { createMoreVault as CreateMetaMorphoEvent } from "../generated/MetaMorphoFactory/MetaMorphoFactory";
 import { InterestRate, MetaMorpho } from "../generated/schema";
 import { MetaMorpho as MetaMorphoTemplate } from "../generated/templates";
 
