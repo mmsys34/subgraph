@@ -949,7 +949,6 @@ type Market @entity @regularPolling {
 
 
   totalSupplyShares: BigInt!
-  totalBorrowShares: BigInt!
 
   totalSupply: BigInt!
   totalBorrow: BigInt!
@@ -957,6 +956,12 @@ type Market @entity @regularPolling {
 
   interest: BigInt!
   fee: BigInt!
+  premiumFee: BigInt!
+
+  isPremiumMarket: Boolean!
+  creditAttestationService: Bytes!
+  irxMaxLltv: BigInt!
+  categoryLltv: [BigInt!]!
 
   irm: Bytes!
   lltv: BigInt!

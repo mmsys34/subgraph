@@ -50,6 +50,12 @@ export function createMarket(
   market.isActive = true;
   market.canBorrowFrom = true;
   market.canUseAsCollateral = true;
+  market.isPremiumMarket = marketStruct ? marketStruct.isPremiumMarket : false;
+  market.creditAttestationService = marketStruct
+    ? marketStruct.creditAttestationService
+    : Address.zero();
+  market.irxMaxLltv = marketStruct ? marketStruct.irxMaxLltv : BigInt.zero();
+  market.categoryLltv = marketStruct ? marketStruct.categoryLltv : [];
 
   const lltvBD = marketStruct
     ? marketStruct.lltv.toBigDecimal().div(BIGDECIMAL_WAD)
@@ -117,12 +123,12 @@ export function createMarket(
   market.collateralPositionCount = INT_ZERO;
 
   market.totalSupplyShares = BigInt.zero();
-  market.totalBorrowShares = BigInt.zero();
   market.totalCollateral = BigInt.zero();
   market.totalSupply = BigInt.zero();
   market.totalBorrow = BigInt.zero();
   market.interest = BigInt.zero();
   market.fee = BigInt.zero();
+  market.premiumFee = BigInt.zero();
 
   market.lastUpdate = event.block.timestamp;
 

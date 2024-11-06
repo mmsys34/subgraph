@@ -903,6 +903,7 @@ export class DataManager {
     const irm = IRM.bind(irmAddress);
     if (this._market.totalBorrow.equals(BigInt.zero())) return;
 
+    // create mad fill out the marketStucture - 2nd paramter
     const marketStruct = new IRM__borrowRateViewInputMarketStruct();
     marketStruct.push(
       ethereum.Value.fromUnsignedBigInt(this._market.totalSupply)
@@ -913,15 +914,18 @@ export class DataManager {
     marketStruct.push(
       ethereum.Value.fromUnsignedBigInt(this._market.totalBorrow)
     );
-    marketStruct.push(
-      ethereum.Value.fromUnsignedBigInt(this._market.totalBorrowShares)
-    );
+    marketStruct.push(ethereum.Value.fromUnsignedBigInt(BigInt.zero()));
     marketStruct.push(
       ethereum.Value.fromUnsignedBigInt(this._market.lastUpdate)
     );
     marketStruct.push(ethereum.Value.fromUnsignedBigInt(this._market.fee));
+    marketStruct.push(
+      ethereum.Value.fromUnsignedBigInt(this._market.premiumFee)
+    );
 
+    // create mad fill out the marketParams - 1st paramter
     const marketParams = new IRM__borrowRateViewInputMarketParamsStruct();
+    marketParams.push(ethereum.Value.fromBoolean(this._market.isPremiumMarket));
     marketParams.push(
       ethereum.Value.fromAddress(Address.fromBytes(this._market.borrowedToken))
     );
@@ -943,6 +947,17 @@ export class DataManager {
       ethereum.Value.fromAddress(Address.fromBytes(this._market.irm))
     );
     marketParams.push(ethereum.Value.fromUnsignedBigInt(this._market.lltv));
+    marketParams.push(
+      ethereum.Value.fromAddress(
+        Address.fromBytes(this._market.creditAttestationService)
+      )
+    );
+    marketParams.push(
+      ethereum.Value.fromUnsignedBigInt(this._market.irxMaxLltv)
+    );
+    marketParams.push(
+      ethereum.Value.fromUnsignedBigIntArray(this._market.categoryLltv)
+    );
 
     const borrowRateTry = irm.try_borrowRateView(marketParams, marketStruct);
     if (!borrowRateTry.reverted) {

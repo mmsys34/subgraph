@@ -14,6 +14,7 @@ import {
   SetFee,
   SetFeeRecipient,
   SetOwner,
+  SetPremiumFee,
   Supply,
   SupplyCollateral,
   Withdraw,
@@ -86,7 +87,6 @@ export function handleBorrow(event: Borrow): void {
 
   // We update the market after updating the position
   market.totalBorrow = market.totalBorrow.plus(event.params.assets);
-  market.totalBorrowShares = market.totalBorrowShares.plus(event.params.shares);
   market.save();
 
   const manager = new DataManager(market.id, event);
@@ -186,9 +186,6 @@ export function handleLiquidate(event: Liquidate): void {
   collateralPosition.reduceCollateralPosition(event, event.params.seizedAssets);
 
   market.totalBorrow = market.totalBorrow.minus(event.params.repaidAssets);
-  market.totalBorrowShares = market.totalBorrowShares
-    .minus(event.params.repaidShares)
-    .minus(event.params.badDebtShares);
   if (event.params.badDebtShares.gt(BigInt.zero())) {
     market.totalSupply = market.totalSupply.minus(event.params.badDebtAssets);
     market.totalBorrow = market.totalBorrow.minus(event.params.badDebtAssets);
@@ -226,9 +223,6 @@ export function handleRepay(event: Repay): void {
   );
 
   market.totalBorrow = market.totalBorrow.minus(event.params.assets);
-  market.totalBorrowShares = market.totalBorrowShares.minus(
-    event.params.shares
-  );
   market.save();
 
   const manager = new DataManager(market.id, event);
@@ -242,7 +236,20 @@ export function handleSetAuthorization(event: SetAuthorization): void {}
 export function handleSetFee(event: SetFee): void {
   const market = getMarket(event.params.id);
   market.fee = event.params.newFee;
-  market.reserveFactor = event.params.newFee.toBigDecimal().div(BIGDECIMAL_WAD);
+  market.reserveFactor = event.params.newFee
+    .plus(market.premiumFee)
+    .toBigDecimal()
+    .div(BIGDECIMAL_WAD);
+  market.save();
+}
+
+export function handleSetPremiumFee(event: SetPremiumFee): void {
+  const market = getMarket(event.params.id);
+  market.premiumFee = event.params.newPremiumFee;
+  market.reserveFactor = event.params.newPremiumFee
+    .plus(market.fee)
+    .toBigDecimal()
+    .div(BIGDECIMAL_WAD);
   market.save();
 }
 

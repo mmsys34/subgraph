@@ -1,5 +1,6 @@
-import { BigInt, log, ethereum } from "@graphprotocol/graph-ts";
+import { BigInt, log, ethereum, Address, Bytes } from "@graphprotocol/graph-ts";
 
+import { MorphoBlue } from "../../generated/MorphoBlue/MorphoBlue";
 import {
   Account,
   Market,
@@ -19,6 +20,10 @@ import {
 } from "./constants";
 import { SnapshotManager } from "./snapshots";
 import { TokenManager } from "./token";
+
+const morphoBlue = MorphoBlue.bind(
+  Address.fromString("0x94A2a9202EFf6422ab80B6338d41c89014E5DD72")
+);
 
 export class PositionManager {
   private _counterID: string;
@@ -58,6 +63,7 @@ export class PositionManager {
 
     return Position.load(positionID);
   }
+
   addCollateralPosition(
     event: ethereum.Event,
     amountSupplied: BigInt
@@ -97,6 +103,7 @@ export class PositionManager {
     this._countDailyActivePosition(positionCounter, event);
     return this._position!;
   }
+
   addSupplyPosition(
     event: ethereum.Event,
     sharesSupplied: BigInt,
@@ -147,6 +154,7 @@ export class PositionManager {
     this._countDailyActivePosition(positionCounter, event);
     return this._position!;
   }
+
   addBorrowPosition(event: ethereum.Event, sharesBorrowed: BigInt): Position {
     let positionCounter = _PositionCounter.load(this._counterID);
     if (!positionCounter) {
@@ -169,10 +177,13 @@ export class PositionManager {
       );
     }
 
+    const positionInfo = this.getPositionInfo();
+    if (positionInfo == null) return this._position!;
+
     const amountBorrowed = toAssetsUp(
       sharesBorrowed,
-      this._market.totalBorrowShares,
-      this._market.totalBorrow
+      positionInfo[0],
+      positionInfo[1]
     );
     position.shares = position.shares
       ? position.shares!.plus(sharesBorrowed)
@@ -180,8 +191,8 @@ export class PositionManager {
 
     const totalBorrow = toAssetsUp(
       position.shares!,
-      this._market.totalBorrowShares,
-      this._market.totalBorrow
+      positionInfo[0],
+      positionInfo[1]
     );
 
     position.balance = totalBorrow;
@@ -239,6 +250,7 @@ export class PositionManager {
     this._countDailyActivePosition(positionCounter, event);
     return this._position!;
   }
+
   reduceBorrowPosition(event: ethereum.Event, sharesRepaid: BigInt): Position {
     let positionCounter = _PositionCounter.load(this._counterID);
     if (!positionCounter) {
@@ -259,17 +271,21 @@ export class PositionManager {
       ]);
       return this._position!;
     }
+
+    const positionInfo = this.getPositionInfo();
+    if (positionInfo == null) return this._position!;
+
     const amountRepaid = toAssetsDown(
       sharesRepaid,
-      this._market.totalBorrowShares,
-      this._market.totalBorrow
+      positionInfo[0],
+      positionInfo[1]
     );
     position.shares = position.shares!.minus(sharesRepaid);
 
     const totalBorrow = toAssetsUp(
       position.shares!,
-      this._market.totalBorrowShares,
-      this._market.totalBorrow
+      positionInfo[0],
+      positionInfo[1]
     );
 
     position.balance = totalBorrow;
@@ -392,6 +408,62 @@ export class PositionManager {
     counter.save();
   }
 
+  private getPositionInfo(): Array<BigInt> | null {
+    const userPositionInfo = morphoBlue.try_position(
+      this._market.id,
+      Address.fromBytes(this._account.id)
+    );
+    if (userPositionInfo.reverted) {
+      log.critical("[getUserPositionInfo] fetch position {} failed", [
+        this._market.id.toString(),
+        this._account.id.toString(),
+      ]);
+      return null;
+    }
+
+    const lastMultiplier = userPositionInfo.value.getLastMultiplier();
+    const totalBorrowAssetsForMultiplier =
+      morphoBlue.try_totalBorrowAssetsForMultiplier(
+        this._market.id,
+        lastMultiplier
+      );
+    const totalBorrowSharesForMultiplier =
+      morphoBlue.try_totalBorrowSharesForMultiplier(
+        this._market.id,
+        lastMultiplier
+      );
+
+    return [
+      totalBorrowSharesForMultiplier.value,
+      totalBorrowAssetsForMultiplier.value,
+    ];
+  }
+
+  private _closePosition(position: Position, event: ethereum.Event): void {
+    position.hashClosed = event.transaction.hash;
+    position.blockNumberClosed = event.block.number;
+    position.timestampClosed = event.block.timestamp;
+    position.save();
+
+    // update account position
+    this._account.openPositionCount -= 1;
+    this._account.closedPositionCount += 1;
+    this._account.save();
+
+    // update market position
+    this._market.openPositionCount -= 1;
+    this._market.closedPositionCount += 1;
+    if (position.isCollateral) {
+      this._market.collateralPositionCount -= 1;
+    }
+    this._market.save();
+
+    // update protocol position
+    const protocol = getProtocol();
+    protocol.openPositionCount -= 1;
+    protocol.save();
+  }
+
   _createPosition(
     positionID: string,
     event: ethereum.Event,
@@ -458,30 +530,5 @@ export class PositionManager {
     protocol.openPositionCount += 1;
     protocol.save();
     return position;
-  }
-
-  private _closePosition(position: Position, event: ethereum.Event): void {
-    position.hashClosed = event.transaction.hash;
-    position.blockNumberClosed = event.block.number;
-    position.timestampClosed = event.block.timestamp;
-    position.save();
-
-    // update account position
-    this._account.openPositionCount -= 1;
-    this._account.closedPositionCount += 1;
-    this._account.save();
-
-    // update market position
-    this._market.openPositionCount -= 1;
-    this._market.closedPositionCount += 1;
-    if (position.isCollateral) {
-      this._market.collateralPositionCount -= 1;
-    }
-    this._market.save();
-
-    // update protocol position
-    const protocol = getProtocol();
-    protocol.openPositionCount -= 1;
-    protocol.save();
   }
 }
