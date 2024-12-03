@@ -22,7 +22,7 @@ import { SnapshotManager } from "./snapshots";
 import { TokenManager } from "./token";
 
 const morphoBlue = MorphoBlue.bind(
-  Address.fromString("0x94A2a9202EFf6422ab80B6338d41c89014E5DD72")
+  Address.fromString("0xD6EEb3BD77F9b5eD185cA32526751eC2680AeF06")
 );
 
 export class PositionManager {

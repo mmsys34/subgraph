@@ -30,7 +30,7 @@ const usdPriceFeeds = new Map<string, string>()
   .set(
     wflow,
     Address.fromString(
-      "0x0a4224D61A53932C920F673fE6c4B70Fb0D54345"
+      "0xaCAd8eB605A93b8E0fF993f437f64155FB68D5DD"
     ).toHexString()
   )
   .set(
